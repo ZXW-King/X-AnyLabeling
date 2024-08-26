@@ -1,0 +1,6 @@
+type: fast-scnn
+name: fast-scnn-wire
+display_name: fast-scnn
+model_path: /media/xin/work/github_pro/seg_model/Fast-SCNN-pytorch/onnx_test/onnx_model/fast_scnn_wire_best_argmax_256x640_no_random.onnx
+classes:
+  - wire

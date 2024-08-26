@@ -130,6 +130,33 @@ class SegmentAnything(Model):
             masks, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE
         )
 
+        # 环状分割
+        contours1, xxxx1 = cv2.findContours(
+            masks, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_NONE
+        )
+        max_c = []
+        contours1 = list(contours1)
+        for i, contour11 in enumerate(contours1):
+            contours1[i] = contour11.reshape(-1, 2)
+            max_indices_0 = np.argmax(contours1[i], axis=0)
+            max_c.append(max_indices_0[1])
+        # print("--------------------------------------------------------------------")
+        for i, xx1 in enumerate(xxxx1[0]):
+            if xx1[3] != -1:
+                distances = np.linalg.norm(contours1[xx1[3]] - contours1[i][max_c[i]], axis=1)
+                # 找到距离最近点的索引
+                nearest_index = np.argmin(distances)
+                subarrays_f = np.split(contours1[xx1[3]], [nearest_index])
+                subarrays_z = np.split(contours1[i], [max_c[i]])
+                result = np.concatenate((subarrays_z[1], subarrays_z[0], subarrays_f[1], subarrays_f[0]), axis=0)
+                contours1[xx1[3]] = result
+        contours11 = []
+        for i, xx1 in enumerate(xxxx1[0]):
+            if xx1[3] == -1:
+                contours11.append(contours1[i])
+        contours = contours11
+
+
         # Refine contours
         approx_contours = []
         for contour in contours:

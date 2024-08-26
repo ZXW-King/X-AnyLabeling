@@ -4105,7 +4105,8 @@ class LabelingWidget(LabelDialog):
         label_dir_path = osp.dirname(self.filename)
         if self.output_dir:
             label_dir_path = self.output_dir
-        save_path = osp.realpath(osp.join(label_dir_path, "..", "mask"))
+        # save_path = osp.realpath(osp.join(label_dir_path,"..","mask"))
+        save_path = osp.realpath(label_dir_path + "_mask")
         os.makedirs(save_path, exist_ok=True)
         converter = LabelConverter(classes_file=self.classes_file)
         label_file_list = os.listdir(label_dir_path)

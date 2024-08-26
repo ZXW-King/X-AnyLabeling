@@ -208,6 +208,7 @@ class ModelManager(QObject):
                 "yolov9",
                 "yolow",
                 "yolov10",
+                "fast-scnn",
             ]
         ):
             self.new_model_status.emit(
@@ -1271,6 +1272,30 @@ class ModelManager(QObject):
                     )
                 )
                 return
+        elif model_config["type"] == "fast-scnn":
+            from .fast_scnn import FastSCNN
+
+            try:
+                model_config["model"] = FastSCNN(
+                    model_config, on_message=self.new_model_status.emit
+                )
+                self.auto_segmentation_model_selected.emit()
+            except Exception as e:  # noqa
+                print(
+                    "Error in loading model: {error_message}".format(
+                        error_message=str(e)
+                    )
+                )
+                self.new_model_status.emit(
+                    self.tr(
+                        "Error in loading model: {error_message}".format(
+                            error_message=str(e)
+                        )
+                    )
+                )
+                return
+            # Request next files for prediction
+            self.request_next_files_requested.emit()
         else:
             raise Exception(f"Unknown model type: {model_config['type']}")
 
@@ -1290,6 +1315,7 @@ class ModelManager(QObject):
             "yolov8_efficientvit_sam",
             "grounding_sam",
             "edge_sam",
+            "fast-scnn"
         ]
         if (
             self.loaded_model_config is None
